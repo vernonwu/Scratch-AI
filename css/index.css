@@ -1,0 +1,248 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+header {
+    background-color: rgba(245, 245, 245, 0.729);
+    border-bottom: 2px solid rgba(225, 224, 224, 0.729);
+    ;
+}
+
+header .navbar-nav a.nav-link {
+    color: rgb(119, 119, 119);
+}
+
+header .navbar-nav a.nav-link:hover {
+    color: rgb(82, 139, 255);
+}
+
+header .navbar-nav .active a.nav-link {
+    color: rgb(68, 68, 68);
+}
+
+.Mycontainer {
+    
+    margin-left: 5%;
+    max-width: 90%;
+}
+
+.work-nav {
+    height: 700px;
+}
+
+#work-bar {
+    position: relative;
+    margin-left: 2%;
+    margin-right: 2%;
+    outline: 5px solid #b6eaff;
+    border-radius: 5px;
+    height: 100%;
+}
+
+#toolbar {
+    margin-left: 2%;
+    margin-top: 1%;
+    margin-bottom: 5px;
+    height: 30px;
+    border-radius: 5px;
+    background-color: #f2f2f2;
+    width: 10%;
+    justify-content: left;
+    align-items: center;
+}
+
+.tool {
+    height: 30px;
+    width: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f2f2f2;
+}
+
+.tool:hover {
+    background-color: #e6e6e6;
+}
+
+.toolicon {
+    height: 20px;
+    width: 20px;
+
+}
+
+.toolicon:hover {
+    height: 25px;
+    width: 25px;
+}
+
+.searchbar{
+    width: 80%;
+    height: 30px;
+    margin-left: 10%;
+    margin-top:10px;
+    
+}
+.searchicon{
+    position: relative;
+    width: 10%;
+    cursor: pointer;
+}
+.searchbox{
+    position: relative;
+    width: 80%;
+    border:2px solid #d8edf6;
+    box-sizing:border-box;
+    border-collapse: collapse;
+    border-radius: 20px;
+    outline: none;
+    
+}
+
+.draggable {
+    width: 100px;
+    height: 150px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+
+#componentbox {
+    width: 13%;
+    height: 100%;
+    float: right;
+    display: flex;
+    align-items: center;
+    overflow-y: scroll;
+    flex-direction: column;
+    border-right: #b6eaff;
+    border-right-style: dashed;
+    background-color: white;
+    z-index: 5;
+}
+
+.workspace{
+    position: relative;
+    width: 70%;
+    height: 100%;
+    border-right: #b6eaffb2;
+    border-right-style: ridge;
+    z-index: 100;
+    overflow:auto;
+}
+#canvas {
+    width: 10000px;
+    height: 10000px;
+    position: relative;
+
+    background: linear-gradient(to right, #adadad30 3px, transparent 3px),
+        linear-gradient(to bottom, #adadad30 3px, transparent 3px);
+    background-repeat: repeat;
+    background-size: 25px 25px;
+
+    z-index: 2;
+}
+
+#code-area {
+    width: 17%;
+    height: 100%;
+    float: left;
+    border: none;
+    outline-style: none;
+    background-color: white;
+    z-index: 5;
+}
+
+.image-hovered {
+    border: 3px solid skyblue;
+    border-radius: 5px;
+}
+
+.dot {
+    position: relative;
+    width: 5px;
+    height: 5px;
+    background-color: rgb(68, 143, 175);
+    border-radius: 50%;
+    transition: transform 0.3s;
+    z-index: 1;
+}
+.dot::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    bottom: -30px;
+    left: -30px;
+    }
+
+.top {
+    position: absolute;
+    top: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bottom {
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.left {
+    position: absolute;
+    top: 50%;
+    left: -5px;
+    transform: translateY(-50%);
+}
+
+.right {
+    position: absolute;
+    top: 50%;
+    right: -5px;
+    transform: translateY(-50%);
+}
+
+.dot:hover {
+    width: 8px;
+    height: 8px;
+}
+
+#main-svg {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    z-index: 0;
+}
+
+.line:hover {
+    stroke-width: 2;
+    padding: 15px
+}
+
+.line::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    bottom: -30px;
+    left: -30px;
+    }
+
+#card{
+    position: fixed;
+    visibility: hidden;
+    width: 15%;
+    left: 15%;
+    top: 200px;
+    z-index: 100;
+    align-items: center;
+}
+
+#cardimg{
+    width: 100px;
+    height: 150px;
+}
