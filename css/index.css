@@ -235,7 +235,7 @@ header .navbar-nav .active a.nav-link {
 #card{
     position: fixed;
     visibility: hidden;
-    width: 15%;
+    width: 17%;
     left: 15%;
     top: 200px;
     z-index: 100;
