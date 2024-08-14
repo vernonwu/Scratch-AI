@@ -136,6 +136,7 @@ class NetGraph {
     printGraph_bfsHelp(matrix, namelist, startpos, endpos) {
         let paths = [];
         let queue = [[startpos]];
+        let condeAera = document.getElementById("code-area")
 
         while (queue.length > 0) {
             let path = queue.shift();
@@ -153,15 +154,19 @@ class NetGraph {
                 }
             }
         }
+        condeAera.innerHTML = '';
         for (let path of paths) {
             let pathNames = path.map(node => namelist[node]);
+            condeAera.innerHTML = condeAera.innerHTML +pathNames.join('->')+"\n\n";
             console.log(pathNames.join('->'));
         }
     }
 
 
     printGraph_bfs() {
+        let condeAera = document.getElementById("code-area")
         if (this.checkMatrix(this.edgeList) === false) {
+            condeAera.innerHTML = "Graph is incpomleted";
             console.log("Graph is incpomleted");
         }
         else {
@@ -258,7 +263,7 @@ function selectOnclick(event) {
     document.getElementById("deletetool").style.backgroundColor = "#f2f2f2";
     document.getElementById("paratool").style.backgroundColor = "#f2f2f2";
     buttonClickHandler();
-    // console.log(myGraph);
+    console.log(myGraph);
 }
 
 function deleteOnclick(event) {
