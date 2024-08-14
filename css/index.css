@@ -50,7 +50,7 @@ header .navbar-nav .active a.nav-link {
     height: 30px;
     border-radius: 5px;
     background-color: #f2f2f2;
-    width: 10%;
+    width: 15%;
     justify-content: left;
     align-items: center;
 }
@@ -232,7 +232,7 @@ header .navbar-nav .active a.nav-link {
     left: -30px;
     }
 
-#card{
+#infocard{
     position: fixed;
     visibility: hidden;
     width: 17%;
@@ -241,7 +241,19 @@ header .navbar-nav .active a.nav-link {
     z-index: 100;
     align-items: center;
 }
- 
+
+#paracard{
+    position: fixed;
+    visibility: visible;
+    width: 20%;
+    right: -20%;
+    height: 700px;
+    top: 45px;
+    z-index: 1000;
+    transition: right 0.3s;
+}
+
+
 #cardimg{
     width: 100px;
     height: 150px;

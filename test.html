@@ -1,13 +1,188 @@
-<svg width="100" height="100">
-  <rect x="0" y="0" width="100" height="100" fill="transparent" />
 
-
-  <path d="M10 10 L50 50 L90 10" stroke="black" stroke-width="2" fill="none" />
-
-  
-  <style>
-      rect:hover + path {
-          stroke: red;
-      }
-  </style>
+<!--
+<svg class="main-svg">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"
+        markerUnits="strokeWidth">
+        <path d="M0,0 L0,6 L9,3 z" fill="#f00" />
+    </marker>
+    <marker id="circle" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto"
+        markerUnits="strokeWidth">
+        <circle cx="4" cy="4" r="2" fill="black" />
+    </marker>
+</defs>
 </svg>
+
+<div class="dragzone" ondrop="drop(event)" ondragover="allowDrop(event)">
+  <div class="dot startPoint"  id = '10'draggable="true" ondrag="drag_handler(event)"  >
+  </div>
+  <div class="dot controlPoint1" id = '20'  draggable="true" ondrag="drag_handler(event)">
+  </div>
+  <div class="dot controlPoint2" id = '30' draggable="true" ondrag="drag_handler(event)">
+  </div>
+  <div class="dot endPoint"id = '40' draggable="true" ondrag="drag_handler(event)">
+  </div>
+</div>
+
+<script>
+  let dragid;
+  let svg = document.querySelector(".main-svg");
+  const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  line.setAttribute("d", "M " + 100 + " " + 100 + " C " + 200 + " " + 150 + " " + 300 + " " + 350+" "+400+" "+400);
+  line.setAttribute("stroke", "black"); // 设置描边颜色
+  line.setAttribute("fill", "transparent");
+  line.setAttribute('marker-end', 'url(#arrow)');
+  line.setAttribute('marker-start', 'url(#circle)')
+  line.setAttribute("stroke-width", 1);
+  line.id = 1;
+  svg.appendChild(line);
+
+
+
+  let main_div = document.querySelector(".dragzone")
+  console.log(main_div)
+function drop(event){
+    let tar = document.getElementById(dragid);
+    tar.style.left = event.clientX+'px';
+    tar.style.top = event.clientY+'px'; 
+    updateBezierCurve()
+  }
+
+function allowDrop(event){
+    event.preventDefault();
+    console.log("dargzone")
+  }
+
+  function dragstart_handler(event){
+    event.preventDefault();
+  }
+  function drag_handler(event) {
+    event.preventDefault();
+    dragid=event.target.id;
+    event.target.style.left = event.clientX+'px';
+    event.target.style.top = event.clientY+'px';
+    updateBezierCurve()
+  }
+
+  function updateBezierCurve() {
+    var startPoint = document.querySelector('.startPoint');
+    var controlPoint1 = document.querySelector('.controlPoint1');
+    var controlPoint2 = document.querySelector('.controlPoint2');
+    var endPoint = document.querySelector('.endPoint');
+    let x0,y0,x1,y1,x2,y2,x3,y3
+    x0 = parseInt(startPoint.getBoundingClientRect().left);
+    y0 = parseInt(startPoint.getBoundingClientRect().top);
+    x1 = parseInt(controlPoint1.getBoundingClientRect().left);
+    y1 = parseInt(controlPoint1.getBoundingClientRect().top);
+    x2 = parseInt(controlPoint2.getBoundingClientRect().left);
+    y2 = parseInt(controlPoint2.getBoundingClientRect().top);
+    x3 = parseInt(endPoint.getBoundingClientRect().left);
+    y3 = parseInt(endPoint.getBoundingClientRect().top);
+
+    var path = "M " +x0+ " " + y0 + " C " + x1 + " " + y1+ " " + x2 + " " + 
+    y2 + " " + x3 + " " + y3;
+    console.log(path);
+    var bezierCurve = document.getElementById("1");
+    bezierCurve.setAttribute("d", path);
+  }
+</script>
+<style>
+  .startpoint {
+    position: fixed;
+    left: 100px;
+    top: 100px
+  }
+
+  .controlPoint1 {
+    position: fixed;
+    left: 200px;
+    top: 150px
+  }
+
+  .controlPoint2 {
+    position: fixed;
+    left: 300px;
+    top: 350px
+  }
+
+  .endPoint {
+    position: fixed;
+    left: 400px;
+    top: 400px
+  }
+
+  .dot {
+    width: 5px;
+    height: 5px;
+    background-color: black;
+  }
+  .main-svg {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.dragzone{
+  width: 100%;
+    height: 100%;
+    position: fixed;
+}
+.dot::after {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    bottom: -30px;
+    left: -30px;
+    }
+</style>
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Slide-in Menu</title>
+<style>
+    body {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+    .menu {
+        position: fixed;
+        top: 0;
+        right: -300px; /* 初始时在屏幕右侧隐藏 */
+        width: 300px;
+        height: 100%;
+        background: #f0f0f0;
+        transition: right 0.3s;
+        padding: 20px;
+    }
+    input {
+        width: 100%;
+        margin-bottom: 10px;
+        padding: 5px;
+    }
+</style>
+</head>
+<body>
+    <button onclick="toggleMenu()">Toggle Menu</button>
+    <div class="menu" id="menu">
+        <input type="text" placeholder="Text Field 1">
+        <input type="text" placeholder="Text Field 2">
+    </div>
+    <script>
+        let menuOpen = false;
+        const menu = document.getElementById('menu');
+
+        function toggleMenu() {
+            if (menuOpen) {
+                menu.style.right = '-300px'; // 菜单滑出屏幕
+            } else {
+                menu.style.right = '0'; // 菜单滑入屏幕
+            }
+            menuOpen = !menuOpen;
+        }
+    </script>
+</body>
+</html>

@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ScarchAI</title>
     <link rel="stylesheet" href="./css/index.css">
-    <link rel="stylesheet" href="./lib/bootstrap4/css/bootstrap.css">
+    <link rel="stylesheet" href="./lib/bootstrap4/css/bootstrap.min.css">
     <link rel="stylesheet" href="./lib/swiper/css/swiper.min.css">
 
 </head>
@@ -16,8 +16,6 @@
 <body>
     <!-- 顶部部分 -->
     <div class="top-nav">
-        <link rel="stylesheet" href="css/bootstrap.min.css" />
-        <link rel="stylesheet" href="css/bootstrap.min.css" />
         <header data-block-type="headers" data-id="1" class="fp-active">
             <div class="Mycontainer">
                 <nav class="navbar navbar-expand-md"><button type="button" data-toggle="collapse"
@@ -41,25 +39,35 @@
     <div class="work-nav">
         <div class="row" id="toolbar">
             <div class="tool" id="selecttool">
-                <img class="toolicon" src="image/select.png" onclick = "selectOnclick(event)" draggable="false">
+                <img class="toolicon" src="image/select.png" onclick="selectOnclick(event)" draggable="false">
             </div>
-            <div class="tool" id ="deletetool">
-                <img class="toolicon" src="image/delete.png" onclick = "deleteOnclick(event)" draggable="false">
+            <div class="tool" id="deletetool">
+                <img class="toolicon" src="image/delete.png" onclick="deleteOnclick(event)" draggable="false">
             </div>
-            
+            <div class="tool" id="paratool">
+                <img class="toolicon" src="image/paratool.png" onclick="ParaToolOnclick(event)" draggable="false">
+            </div>
+            <div class="tool" id="generatetool">
+                <img class="toolicon" src="image/generatetool.png" onclick="GenerateToolOnclick(event)" draggable="false">
+            </div>
         </div>
         <div class="row" id="work-bar">
             <div id="componentbox">
                 <div class="searchbar">
-                    <img class= "searchicon" src="image/search.png">
-                    <input class ="searchbox" type="text" name="searchInfo">
+                    <img class="searchicon" src="image/search.png">
+                    <input class="searchbox" type="text" name="searchInfo">
                 </div>
-                
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname = "conv2d" src="image/conv2d.png" draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname = "FC" src="image/FC.png" draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname = "pooling" src="image/pooling.png" draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname = "input" src="image/input.png" draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname = "output" src="image/output.png" draggable="true">
+
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="conv2d" src="image/conv2d.png"
+                    draggable="true">
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="FC" src="image/FC.png"
+                    draggable="true">
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="pooling" src="image/pooling.png"
+                    draggable="true">
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="input" src="image/input.png"
+                    draggable="true">
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="output" src="image/output.png"
+                    draggable="true">
             </div>
             <div class="workspace">
                 <div id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -77,17 +85,35 @@
                     </svg>
                 </div>
             </div>
-            
+
             <textarea id="code-area">hello world</textarea>
         </div>
     </div>
-    <div class="card" id = 'card'>
+    <div class="card " id='infocard'>
         <img src="..." id="cardimg" class="card-img-top" alt="...">
         <div class="card-body">
-          <h5 class="card-title" id = 'cardtitle'>Card title</h5>
-          <p class="card-text">Some example text Some example text Some example text Some example text Some example text</p>
-          <a href="#" class="btn btn-primary">Go somewhere</a>
+            <h5 class="card-title" id='cardtitle'>Card title</h5>
+            <p class="card-text">Some example text Some example text Some example text Some example text Some example
+                text</p>
+            <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
-      </div>
+    </div>
+
+    <div class="card" id="paracard">
+        <div class="card-header" id="paracardHeader">
+            <div>
+                Featured
+            </div>
+            <button type="button"  onclick="buttonClickHandler()" class="btn-close" aria-label="Close" style="border: none;background: none;position: absolute;right: 0%;top: 1%;">
+                <img src="image/close.png" style="height: 20px; width: 20px;" alt="ButtonImage">
+            </button>
+        </div>
+        <ul class="list-group list-group-flush" id="paracardList">
+            <!-- <li class="list-group-item">An item</li>
+            <li class="list-group-item">A second item</li>
+            <li class="list-group-item">A third item</li> -->
+        </ul>
+    </div>
+
 </body>
 <script src="./script/index.js" type="text/javascript"></script>
