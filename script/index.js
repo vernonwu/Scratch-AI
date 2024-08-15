@@ -16,10 +16,10 @@ class NetGraph {
             this.parameterList.kernel_size = null;
             this.parameterList.stride = null;
         }
-        else if(this.graphName == 'FC'){
+        else if (this.graphName == 'FC') {
             this.parameterList["Activate Function"] = null;
         }
-        else if(this.graphName =="pooling"){
+        else if (this.graphName == "pooling") {
             this.parameterList["Pooling type"] = null;
             this.parameterList.kernel_size = null;
             this.parameterList.stride = null;
@@ -157,7 +157,7 @@ class NetGraph {
         condeAera.innerHTML = '';
         for (let path of paths) {
             let pathNames = path.map(node => namelist[node]);
-            condeAera.innerHTML = condeAera.innerHTML +pathNames.join('->')+"\n\n";
+            condeAera.innerHTML = condeAera.innerHTML + pathNames.join('->') + "\n\n";
             console.log(pathNames.join('->'));
         }
     }
@@ -174,7 +174,7 @@ class NetGraph {
             [GraphStartNode, GraphEndNode] = this.checkMatrix(this.edgeList);
             let namelist = [];
             this.nodeList.forEach(node => {
-                namelist.push(node.graphName+JSON.stringify(node.parameterList));
+                namelist.push(node.graphName + JSON.stringify(node.parameterList));
             });
             this.printGraph_bfsHelp(this.edgeList, namelist, GraphStartNode, GraphEndNode);
         }
@@ -194,7 +194,7 @@ let myGraph = new NetGraph('Main-Graph');
 let totalNodeList = [];
 let paraExample = { 'kernel_size': 3, "padding": 0, "stride": 1, "input dimension": "3,500,800", "output dimension": "3,500,800" }
 const ActivateFunctionList = ['Sigmoid', 'Tanh', 'ReLU', 'Leaky ReLU', 'ELU', 'Softmax', 'Swish'];
-const PoolingTypeList = ['Max',"Min","Average"];
+const PoolingTypeList = ['Max', "Min", "Average"];
 
 let canvas = document.getElementById("canvas");
 let startNode, endNode;
@@ -215,13 +215,19 @@ canvas.addEventListener('mousemove', function (event) {
         line = document.getElementById(arrowId);
         offsetX = parseFloat(offsetX);
         offsetY = parseFloat(offsetY);
-        var pathData = line.getAttribute("d").split(" ");
-        var shiftY = parseFloat(line.getAttribute("shiftY"));
-        pathData[4] = (parseFloat(pathData[1]) + offsetX) / 2;
-        pathData[5] = (parseFloat(pathData[2]) + offsetY) / 2 + shiftY + sign(shiftY) * Math.abs(offsetY - parseFloat(pathData[2]));
-        pathData[6] = offsetX;
-        pathData[7] = offsetY;
-        line.setAttribute("d", pathData.join(" "));
+        var pathData = line.getAttribute("d");
+        var coordinates = pathData.match(/[-+]?\d*\.?\d+/g);
+        coordinates = coordinates.map(coord => parseFloat(coord));
+        coordinates[2] = coordinates[0] + (offsetX - coordinates[0]) / 3;
+        coordinates[3] = coordinates[1] + (offsetY - coordinates[1]) / 3;
+        coordinates[4] = coordinates[0] + 2 * (offsetX - coordinates[0]) / 3;
+        coordinates[5] = coordinates[1] + 2 * (offsetY - coordinates[1]) / 3;
+        coordinates[6] = offsetX;
+        coordinates[7] = offsetY;
+        line.setAttribute("d", "M " + coordinates[0] + " " + coordinates[1] + " C " +
+            coordinates[2] + " " + coordinates[3] + ", " +
+            coordinates[4] + " " + coordinates[5] + ", " +
+            coordinates[6] + " " + coordinates[7]);
     }
 });
 
@@ -282,7 +288,7 @@ function ParaToolOnclick(event) {
     document.getElementById("paratool").style.backgroundColor = "#e6e6e6";
 }
 
-function GenerateToolOnclick(event){
+function GenerateToolOnclick(event) {
     myGraph.printGraph_bfs();
 }
 
@@ -300,14 +306,14 @@ function dotclick_handler(event) {
             var offsetX = (event.target.getBoundingClientRect().left - svg.getBoundingClientRect().left);
             var offsetY = (event.target.getBoundingClientRect().top - svg.getBoundingClientRect().top);
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            line.setAttribute("d", "M " + offsetX + " " + offsetY + " Q " + offsetX + " " + offsetY + " " + offsetX + " " + offsetY);
+            line.setAttribute("d", "M " + offsetX + " " + offsetY + " C " + offsetX + " " + offsetY + ", " + offsetX + " " + offsetY + ", " + offsetX + " " + offsetY);
             line.setAttribute("stroke", "black"); // 设置描边颜色
             line.setAttribute("fill", "transparent");
             line.setAttribute('marker-end', 'url(#arrow)');
             line.setAttribute('marker-start', 'url(#circle)')
             line.setAttribute("stroke-width", 1);
             line.id = arrowId;
-            line.setAttribute("shiftY", Math.floor(-event.target.parentNode.getBoundingClientRect().height / 2 - event.target.parentNode.getBoundingClientRect().top + event.target.getBoundingClientRect().top) + 4);
+            // line.setAttribute("shiftY", Math.floor(-event.target.parentNode.getBoundingClientRect().height / 2 - event.target.parentNode.getBoundingClientRect().top + event.target.getBoundingClientRect().top) + 4);
             line.style.zIndex = 2;
             line.onclick = function (event) {
                 if (tool == 1) {
@@ -332,43 +338,49 @@ function dotclick_handler(event) {
 
         }
 
-    
-    else if (globalclicktime == 1) {
-        globalclicktime = 0;
-        var arrowList = event.target.getAttribute('arrow-list');
-        endNode = totalNodeList[event.target.parentNode.getAttribute("Nodepos")];
-        if (!arrowList) {
-            var initialList = [];
-            initialList.push(arrowId);
-            initialList.push("end");
-            event.target.setAttribute('arrow-list', JSON.stringify(initialList));
 
+        else if (globalclicktime == 1) {
+            globalclicktime = 0;
+            var arrowList = event.target.getAttribute('arrow-list');
+            endNode = totalNodeList[event.target.parentNode.getAttribute("Nodepos")];
+            if (!arrowList) {
+                var initialList = [];
+                initialList.push(arrowId);
+                initialList.push("end");
+                event.target.setAttribute('arrow-list', JSON.stringify(initialList));
+
+            }
+            else {
+                arrowList = JSON.parse(arrowList);
+                arrowList.push(arrowId);
+                arrowList.push("end");
+                event.target.setAttribute('arrow-list', JSON.stringify(arrowList));
+            }
+            var offsetX = (event.target.getBoundingClientRect().left - svg.getBoundingClientRect().left);
+            var offsetY = (event.target.getBoundingClientRect().top - svg.getBoundingClientRect().top);
+            line = document.getElementById(arrowId);
+            var pathData = line.getAttribute("d");
+            var coordinates = pathData.match(/[-+]?\d*\.?\d+/g);
+            coordinates = coordinates.map(coord => parseFloat(coord));
+            coordinates[2] = coordinates[0] + (offsetX - coordinates[0]) / 3;
+            coordinates[3] = coordinates[1] + (offsetY - coordinates[1]) / 3;
+            coordinates[4] = coordinates[0] + 2 * (offsetX - coordinates[0]) / 3;
+            coordinates[5] = coordinates[1] + 2 * (offsetY - coordinates[1]) / 3;
+            coordinates[6] = offsetX;
+            coordinates[7] = offsetY;
+            line.setAttribute("d", "M " + coordinates[0] + " " + coordinates[1] + " C " +
+                coordinates[2] + " " + coordinates[3] + ", " +
+                coordinates[4] + " " + coordinates[5] + ", " +
+                coordinates[6] + " " + coordinates[7]);
+            line.classList.add("line");
+            myGraph.addEdge(startNode, endNode);
+            arrowId++;
+            adjustAllArrow();
         }
-        else {
-            arrowList = JSON.parse(arrowList);
-            arrowList.push(arrowId);
-            arrowList.push("end");
-            event.target.setAttribute('arrow-list', JSON.stringify(arrowList));
-        }
-        var offsetX = (event.target.getBoundingClientRect().left - svg.getBoundingClientRect().left);
-        var offsetY = (event.target.getBoundingClientRect().top - svg.getBoundingClientRect().top);
-        line = document.getElementById(arrowId);
-        var pathData = line.getAttribute("d").split(" ");
-        var shiftY = parseFloat(line.getAttribute("shiftY"));
-        pathData[4] = (parseFloat(pathData[1]) + offsetX) / 2;
-        pathData[5] = (parseFloat(pathData[2]) + offsetY) / 2 + shiftY + sign(shiftY) * Math.abs(offsetY - parseFloat(pathData[2]));
-        pathData[6] = offsetX;
-        pathData[7] = offsetY;
-        line.setAttribute("d", pathData.join(" "));
-        line.classList.add("line");
-        myGraph.addEdge(startNode, endNode);
-        arrowId++;
     }
-}
 }
 
 function updateArrow(element) {
-
     for (i = 1; i < 5; i++) {
         var arrowList = element.children[i].getAttribute('arrow-list');
         const svg = document.getElementById('main-svg');
@@ -380,27 +392,90 @@ function updateArrow(element) {
         else {
             arrowList = JSON.parse(arrowList);
             for (j = 0; j < arrowList.length / 2; j++) {
-                if (arrowList[2 * j + 1] == "start") {
+                if (arrowList[2 * j + 1] == "end") {
                     line = document.getElementById(arrowList[2 * j])
-                    var pathData = line.getAttribute("d").split(" ");
-                    var shiftY = parseFloat(line.getAttribute("shiftY"));
-                    pathData[1] = offsetX;
-                    pathData[2] = offsetY;
-                    pathData[5] = (parseFloat(pathData[2]) + parseFloat(pathData[7])) / 2 + shiftY + sign(shiftY) * Math.abs(parseFloat(pathData[7]) - parseFloat(pathData[2]));
-                    line.setAttribute("d", pathData.join(" "));
+                    var pathData = line.getAttribute("d");
+                    var coordinates = pathData.match(/[-+]?\d*\.?\d+/g);
+                    coordinates = coordinates.map(coord => parseFloat(coord));
+                    coordinates[2] = coordinates[0] + (offsetX - coordinates[0]) / 3;
+                    coordinates[3] = coordinates[1] + (offsetY - coordinates[1]) / 3;
+                    coordinates[4] = coordinates[0] + 2 * (offsetX - coordinates[0]) / 3;
+                    coordinates[5] = coordinates[1] + 2 * (offsetY - coordinates[1]) / 3;
+                    coordinates[6] = offsetX;
+                    coordinates[7] = offsetY;
+                    line.setAttribute("d", "M " + coordinates[0] + " " + coordinates[1] + " C " +
+                        coordinates[2] + " " + coordinates[3] + ", " +
+                        coordinates[4] + " " + coordinates[5] + ", " +
+                        coordinates[6] + " " + coordinates[7]);
                 }
-                else if (arrowList[2 * j + 1] == "end") {
+                else if (arrowList[2 * j + 1] == "start") {
                     line = document.getElementById(arrowList[2 * j])
-                    var pathData = line.getAttribute("d").split(" ");
-                    var shiftY = parseFloat(line.getAttribute("shiftY"));
-                    pathData[6] = offsetX;
-                    pathData[7] = offsetY;
-                    pathData[5] = (parseFloat(pathData[2]) + parseFloat(pathData[7])) / 2 + shiftY + sign(shiftY) * Math.abs(parseFloat(pathData[7]) - parseFloat(pathData[2]));
-                    line.setAttribute("d", pathData.join(" "));
+                    var pathData = line.getAttribute("d");
+                    var coordinates = pathData.match(/[-+]?\d*\.?\d+/g);
+                    coordinates = coordinates.map(coord => parseFloat(coord));
+                    coordinates[0] = offsetX;
+                    coordinates[1] = offsetY;
+                    coordinates[2] = coordinates[6] - 2 * (offsetX - coordinates[0]) / 3;
+                    coordinates[3] = coordinates[7] - 2 * (offsetY - coordinates[1]) / 3;
+                    coordinates[4] = coordinates[6] - (offsetX - coordinates[0]) / 3;
+                    coordinates[5] = coordinates[7] - (offsetY - coordinates[1]) / 3;
+                    line.setAttribute("d", "M " + coordinates[0] + " " + coordinates[1] + " C " +
+                        coordinates[2] + " " + coordinates[3] + ", " +
+                        coordinates[4] + " " + coordinates[5] + ", " +
+                        coordinates[6] + " " + coordinates[7]);
                 }
             }
         }
     }
+    adjustAllArrow();
+}
+
+function adjustAllArrow() {
+    let lines = document.querySelectorAll('.line');
+    lines.forEach(line => {
+        let adjustId = line.id;
+        let startDirection, endDirection;
+        document.querySelectorAll(".dot").forEach(dot => {
+            var arrowList = dot.getAttribute('arrow-list');
+            if (!arrowList) {
+                return;
+            }
+            arrowList = JSON.parse(arrowList);
+            for (j = 0; j < arrowList.length / 2; j++) {
+                if (arrowList[2 * j] == adjustId && arrowList[2 * j + 1] == "end") {
+                    endDirection = Array.from(dot.parentNode.childNodes).indexOf(dot);
+                }
+                else if (arrowList[2 * j] == adjustId && arrowList[2 * j + 1] == "start") {
+                    startDirection = Array.from(dot.parentNode.childNodes).indexOf(dot);
+                }
+            }
+        })
+        var pathData = line.getAttribute("d");
+        var coordinates = pathData.match(/[-+]?\d*\.?\d+/g);
+        coordinates = coordinates.map(coord => parseFloat(coord));
+        coordinates[2] = coordinates[6] - 2 * (coordinates[6] - coordinates[0]) / 3;
+        coordinates[3] = coordinates[7] - 2 * (coordinates[7] - coordinates[1]) / 3;
+        coordinates[4] = coordinates[6] - (coordinates[6] - coordinates[0]) / 3;
+        coordinates[5] = coordinates[7] - (coordinates[7] - coordinates[1]) / 3;
+        if (startDirection == 1 || startDirection == 2) {
+            coordinates[3] = coordinates[1] + sign(startDirection - 1.5) * Math.abs(coordinates[7]-coordinates[1]);
+        }
+        else if (startDirection == 3 || startDirection == 4) {
+            coordinates[2] = coordinates[0] + sign(startDirection - 3.5) * Math.abs(coordinates[6]-coordinates[0]);
+        }
+
+        if (endDirection == 1 || endDirection == 2) {
+            coordinates[5] = coordinates[7] + sign(endDirection - 1.5) * Math.abs(coordinates[7]-coordinates[1]);
+        }
+        else if (endDirection == 3 || endDirection == 4) {
+            coordinates[4] = coordinates[6] + sign(endDirection - 3.5) * Math.abs(coordinates[6]-coordinates[0]);
+        }
+
+        line.setAttribute("d", "M " + coordinates[0] + " " + coordinates[1] + " C " +
+            coordinates[2] + " " + coordinates[3] + ", " +
+            coordinates[4] + " " + coordinates[5] + ", " +
+            coordinates[6] + " " + coordinates[7]);
+    })
 }
 
 function deleteArrow(id) {
@@ -517,8 +592,8 @@ function drop(event) {
                             parainput.appendChild(option);
                         })
                         pararow.classList.add('list-group-item');
-                        if(targetNode.parameterList[key]){
-                            parainput.value=targetNode.parameterList[key];
+                        if (targetNode.parameterList[key]) {
+                            parainput.value = targetNode.parameterList[key];
 
                         }
 
@@ -544,8 +619,8 @@ function drop(event) {
                             parainput.appendChild(option);
                         })
                         pararow.classList.add('list-group-item');
-                        if(targetNode.parameterList[key]){
-                            parainput.value=targetNode.parameterList[key];
+                        if (targetNode.parameterList[key]) {
+                            parainput.value = targetNode.parameterList[key];
 
                         }
 
@@ -554,9 +629,10 @@ function drop(event) {
                         paracardList.appendChild(pararow);
                         return;
                     }
-                    
+
                     var pararow = document.createElement('li');
                     var parainput = document.createElement('input');
+                    parainput.style.width = "100%";
                     parainput.setAttribute("Nodepos", totalNodeList.indexOf(targetNode));
                     parainput.setAttribute("Parameter", key)
                     parainput.addEventListener('input', function () {
@@ -570,12 +646,12 @@ function drop(event) {
                         }
                     })
                     parainput.placeholder = "Example:" + paraExample[key];
-                    if(targetNode.parameterList[key]){
-                        if(key == "input dimension" || key == "output dimension"){
-                            parainput.value=targetNode.parameterList[key].join(',');
+                    if (targetNode.parameterList[key]) {
+                        if (key == "input dimension" || key == "output dimension") {
+                            parainput.value = targetNode.parameterList[key].join(',');
                         }
-                        else{
-                            parainput.value=targetNode.parameterList[key];
+                        else {
+                            parainput.value = targetNode.parameterList[key];
                         }
                     }
                     pararow.classList.add('list-group-item');
@@ -657,9 +733,9 @@ function dragstart_handler(event) {
     event.dataTransfer.setData('GraphName', event.target.getAttribute('imgname'));
 }
 
-function buttonClickHandler(){
+function buttonClickHandler() {
     let paracard = document.getElementById("paracard");
-    paracard.style.right="-20%";
+    paracard.style.right = "-20%";
 
 }
 
