@@ -166,7 +166,7 @@ class NetGraph {
     printGraph_bfs() {
         let condeAera = document.getElementById("code-area")
         if (this.checkMatrix(this.edgeList) === false) {
-            condeAera.innerHTML = "Graph is incpomleted";
+            condeAera.innerHTML = "Graph is incompleted";
             console.log("Graph is incpomleted");
         }
         else {
