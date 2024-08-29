@@ -27,7 +27,7 @@ class NetGraph {
             return false;
         }
         let startIndex = this.nodeList.indexOf(start);
-        let endIndex = this.nodeList.indexOf(end); 
+        let endIndex = this.nodeList.indexOf(end);
         this.edgeList[startIndex][endIndex] = 1;
     }
 
@@ -42,16 +42,16 @@ class NetGraph {
             return true;
         }
     }
-    
+
     deleteEdge(start, end) {
         if (!this.nodeList.includes(start) || !this.nodeList.includes(end)) {
             return false;
         }
         let startIndex = this.nodeList.indexOf(start);
-        let endIndex = this.nodeList.indexOf(end); 
+        let endIndex = this.nodeList.indexOf(end);
         this.edgeList[startIndex][endIndex] = 0;
     }
-    
+
     setDim(inputDim, outputDim) {
         this.inputDim = inputDim;
         this.outputDim = outputDim;
@@ -93,7 +93,7 @@ class NetGraph {
         let zeroColIndex = -1;
         let rowCount = 0;
         let colCount = 0;
-    
+
         for (let i = 0; i < matrix.length; i++) {
             let rowSum = 0;
             let colSum = 0;
@@ -110,7 +110,7 @@ class NetGraph {
                 colCount++;
             }
         }
-    
+
         if (rowCount === 1 && colCount === 1) {
             return [zeroColIndex,zeroRowIndex];
         } else {
@@ -144,7 +144,7 @@ class NetGraph {
             console.log(pathNames.join('->'));
         }
     }
-    
+
 }
 
 // let graph = new NetGraph("test");

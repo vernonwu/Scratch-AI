@@ -1,0 +1,15 @@
+{
+  "name": "scarchaiui",
+  "version": "1.0.0",
+  "description": "initial version for scratchAI project.",
+  "type": "module",
+  "main": "scripts/index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "start": "node scripts/index.js"
+  },
+  "author": "Vernon Wu & YueQuanLingZhi",
+  "license": "MIT"
+}

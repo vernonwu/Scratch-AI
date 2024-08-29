@@ -4,26 +4,86 @@ class NetGraph {
         this.edgeList = [];
         this.parameterList = {};
         this.graphName = graphName;
+        this.inputDim = null;
+        this.outputDim = null;
         this.initializeParameterList();
     }
 
     initializeParameterList() {
-        this.parameterList["input dimension"] = null;
-        this.parameterList["output dimension"] = null;
-        if (this.graphName == 'conv2d') {
-            this.parameterList["Activate Function"] = null;
-            this.parameterList.padding = null;
-            this.parameterList.kernel_size = null;
-            this.parameterList.stride = null;
+        switch (this.graphName) {
+            case 'input':
+                this.parameterList["input dimension"] = [3,48,48];
+                break;
+            case 'output':
+                this.parameterList["output dimension"] = 10;
+                break;
+            case 'Conv2d':
+                this.parameterList["Activate Function"] = 'Relu';
+                this.parameterList.padding = 0;
+                this.parameterList.kernel_size = 3;
+                this.parameterList.stride = 1;
+                break;
+            case 'Linear':
+                this.parameterList["Activate Function"] = 'Relu';
+                this.parameterList["in_features"] = 48;
+                this.parameterList["out_features"] = 10;
+                break;
+            case 'pooling':
+                this.parameterList["Pooling type"] = 'Max';
+                this.parameterList.kernel_size = 3;
+                this.parameterList.stride = 1;
+                break;
+            case 'concatenate':
+                this.parameterList["dim"] = 1;
+                break;
+            default:
+                console.warn(`Unsupported graph name: ${this.graphName}`);
         }
-        else if (this.graphName == 'FC') {
-            this.parameterList["Activate Function"] = null;
+    }
+    calculateOutputDimensions(inputDim) {
+
+        switch (this.graphName) {
+            case 'input' || 'output':
+                return inputDim;
+            case 'concatenate':
+                //TODO: modify this
+                return inputDim;
+            case 'Conv2d':
+                return calculateConv2dOutput(inputDim);
+            case 'pooling':
+                return calculatePoolingOutput(inputDim);
+            case 'Linear':
+                return calculateLinearOutput(inputDim);
+            default:
+                console.warn(`Unsupported module name: ${moduleName}`);
+                return inputDim;
         }
-        else if (this.graphName == "pooling") {
-            this.parameterList["Pooling type"] = null;
-            this.parameterList.kernel_size = null;
-            this.parameterList.stride = null;
-        }
+    }
+
+    //TODO: implement for multiple batches
+
+    calculateConv2dOutput(inputDim) {
+        const [inChannels, inHeight, inWidth] = inputDim;
+        const kernel_size = this.parameterList.kernel_size;
+        const padding = this.parameterList.padding;
+        const stride = this.parameterList.stride;
+        const outHeight = Math.floor((inHeight + 2 * padding - kernel_size) / stride + 1);
+        const outWidth = Math.floor((inWidth + 2 * padding - kernel_size) / stride + 1);
+        return `${inChannels},${outHeight},${outWidth}`;
+    }
+
+    calculatePoolingOutput(inputDim) {
+        const [inChannels, inHeight, inWidth] = inputDim;
+        const kernel_size = this.parameterList.kernel_size;
+        const stride = this.parameterList.stride;
+        const outHeight = Math.floor((inHeight - kernel_size) / stride + 1);
+        const outWidth = Math.floor((inWidth - kernel_size) / stride + 1);
+        return `${inChannels},${outHeight},${outWidth}`;
+    }
+
+    calculateLinearOutput(inputDim) {
+        const outFeatures = this.parameterList["out features"];
+        return `${outFeatures}`;
     }
 
     addNode(Node) {
@@ -32,8 +92,7 @@ class NetGraph {
             let index = this.nodeList.indexOf(Node);
             this.edgeList = this.augmentMatrix(this.edgeList, index);
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -50,8 +109,7 @@ class NetGraph {
     deleteNode(Node) {
         if (!this.nodeList.includes(Node)) {
             return false;
-        }
-        else {
+        } else {
             let index = this.nodeList.indexOf(Node);
             this.nodeList.splice(index, 1);
             this.edgeList = this.augmentMatrix2(this.edgeList, index);
@@ -68,9 +126,12 @@ class NetGraph {
         this.edgeList[startIndex][endIndex] = 0;
     }
 
-    setDim(inputDim, outputDim) {
-        this.parameterList["input dimension"] = inputDim;
-        this.parameterList["output dimension"] = outputDim;
+    setInputDim(inputDim) {
+        this.inputDim = inputDim;
+    }
+
+    setOutputDim(outputDim) {
+        this.outputDim = outputDim;
     }
 
     generateZeroMatrix(N) {
@@ -84,7 +145,7 @@ class NetGraph {
         return matrix;
     }
 
-    augmentMatrix(matrix, pos,) {
+    augmentMatrix(matrix, pos) {
         const len = matrix.length;
         for (let row = 0; row < len; row++) {
             matrix[row].splice(pos, 0, 0);
@@ -131,12 +192,69 @@ class NetGraph {
         } else {
             return false;
         }
-    };
+    }
+
+    topologicalSort() {
+        let indegree = new Array(this.nodeList.length).fill(0);
+        let sortedNodes = [];
+        let queue = [];
+
+        // Calculate indegree for each node
+        for (let i = 0; i < this.edgeList.length; i++) {
+            for (let j = 0; j < this.edgeList[i].length; j++) {
+                if (this.edgeList[i][j] === 1) {
+                    indegree[j]++;
+                }
+            }
+        }
+
+        // Add all nodes with indegree 0 to the queue
+        for (let i = 0; i < indegree.length; i++) {
+            if (indegree[i] === 0) {
+                queue.push(i);
+            }
+        }
+
+        // Process nodes in queue
+        while (queue.length > 0) {
+            let node = queue.shift();
+            sortedNodes.push(node);
+
+            for (let i = 0; i < this.edgeList[node].length; i++) {
+                if (this.edgeList[node][i] === 1) {
+                    indegree[i]--;
+                    if (indegree[i] === 0) {
+                        queue.push(i);
+                    }
+                }
+            }
+        }
+
+        // If all nodes are not sorted, the graph has a cycle
+        if (sortedNodes.length !== this.nodeList.length) {
+            console.error("Graph has a cycle!");
+            return false;
+        }
+
+        // Reorder nodeList and edgeList based on sortedNodes
+        let newNodeList = sortedNodes.map(index => this.nodeList[index]);
+        let newEdgeList = this.generateZeroMatrix(this.nodeList.length);
+
+        for (let i = 0; i < sortedNodes.length; i++) {
+            for (let j = 0; j < sortedNodes.length; j++) {
+                newEdgeList[i][j] = this.edgeList[sortedNodes[i]][sortedNodes[j]];
+            }
+        }
+
+        this.nodeList = newNodeList;
+        this.edgeList = newEdgeList;
+        return true;
+    }
 
     printGraph_bfsHelp(matrix, namelist, startpos, endpos) {
         let paths = [];
         let queue = [[startpos]];
-        let condeAera = document.getElementById("code-area")
+        let codeArea = document.getElementById("code-area");
 
         while (queue.length > 0) {
             let path = queue.shift();
@@ -154,36 +272,150 @@ class NetGraph {
                 }
             }
         }
-        condeAera.innerHTML = '';
+
+        codeArea.innerHTML = '';
+
         for (let path of paths) {
             let pathNames = path.map(node => namelist[node]);
-            condeAera.innerHTML = condeAera.innerHTML + pathNames.join('->') + "\n\n";
+            codeArea.innerHTML += pathNames.join('->') + "\n\n";
             console.log(pathNames.join('->'));
+        }
+
+        return paths;
+    }
+
+    printGraph_bfs() {
+        let codeArea = document.getElementById("code-area");
+
+        if (!this.topologicalSort()) {
+            codeArea.innerHTML = "Error: The graph contains a cycle!";
+            return;
+        }
+
+        if (this.nodeList[0].graphName !== "input" || this.nodeList[this.nodeList.length - 1].graphName !== "output") {
+            codeArea.innerHTML = "Error: The first node must be 'input' and the last node must be 'output'.";
+            return;
+        }
+
+        let GraphStartNode, GraphEndNode;
+        [GraphStartNode, GraphEndNode] = this.checkMatrix(this.edgeList);
+
+        // set input dimension if not set
+        let inputNode = this.nodeList[0];
+        let inputDim = inputNode.parameterList["input dimension"];
+        if (!inputDim) {
+            inputDim = [3, 48, 48];
+            inputNode.parameterList["input dimension"] = inputDim;
+        }
+        inputNode.setInputDim(inputDim);
+        inputNode.setOutputDim(inputDim);
+
+        //TODO: Autodimension logic
+
+        let namelist = [];
+        this.nodeList.forEach(node => {
+            namelist.push(node.graphName + ":" + JSON.stringify(node.parameterList));
+        });
+
+        let paths = this.printGraph_bfsHelp(this.edgeList, namelist, GraphStartNode, GraphEndNode);
+
+        // record all parent nodes for each node
+        let parentNodes = {};
+
+        for (let path of paths) {
+            for (let i = 1; i < path.length; i++) {
+                let node = path[i];
+                let parent = path[i - 1];
+                if (!parentNodes[node]) {
+                    parentNodes[node] = [];
+                }
+                if (!parentNodes[node].includes(parent)) {
+                    parentNodes[node].push(parent);
+                }
+            }
+        }
+
+        // if a node has more than one parent, check if it is a concatenation layer
+        for (let node in parentNodes) {
+            if (parentNodes[node].length > 1) {
+                if (this.nodeList[node].graphName !== 'concatenate') {
+                    codeArea.innerHTML = `Error: Concatenation layer required before node ${this.nodeList[node].graphName}.`;
+                    return;
+                }
+            }
+        }
+
+        let codeGenerator = new PyTorchCodeGenerator(this, parentNodes);
+        let generatedCode = codeGenerator.generate();
+        codeArea.innerHTML += generatedCode;
+    }
+}
+
+class PyTorchCodeGenerator {
+    constructor(graph, parentNodes) {
+        this.graph = graph;
+        this.parentNodes = parentNodes;
+        this.layerNames = {};
+        this.generateModuleName();
+    }
+
+    generateModuleName(){
+        let moduleCount = {};
+        for (let i = 0; i < this.graph.nodeList.length; i++) {
+            let node = this.graph.nodeList[i];
+            let layerName = node.graphName;
+            if (!moduleCount[layerName]) {
+                moduleCount[layerName] = 1;
+            } else {
+                moduleCount[layerName]++;
+            }
+            this.layerNames[i] = layerName + moduleCount[layerName];
         }
     }
 
-
-    printGraph_bfs() {
-        let condeAera = document.getElementById("code-area")
-        if (this.checkMatrix(this.edgeList) === false) {
-            condeAera.innerHTML = "Graph is incompleted";
-            console.log("Graph is incpomleted");
+    generatePythonLine(index){
+        let layerName = this.layerNames[index];
+        let parent = this.parentNodes[index];
+        let node = this.graph.nodeList[index];
+        let parentNames = parent.map(p => this.layerNames[p]);
+        if (parent.length > 1) {
+            return `        ${layerName}_output = torch.cat([${parentNames.map(p => p + '_output').join(', ')}], dim=${node.parameterList.dim})\n`;
         }
         else {
-            let GraphStartNode, GraphEndNode;
-            [GraphStartNode, GraphEndNode] = this.checkMatrix(this.edgeList);
-            let namelist = [];
-            this.nodeList.forEach(node => {
-                namelist.push(node.graphName + JSON.stringify(node.parameterList));
-            });
-            this.printGraph_bfsHelp(this.edgeList, namelist, GraphStartNode, GraphEndNode);
+            return `        ${layerName}_output = self.${layerName}(${parentNames[0] + '_output'})\n`;
+        }
+    }
+
+    generate() {
+        let code = "import torch\nimport torch.nn as nn\n\n";
+        code += "class MyModel(nn.Module):\n";
+        code += "    def __init__(self):\n";
+        code += "        super(MyModel, self).__init__()\n";
+
+        // Define layers
+        for (let i = 1; i < this.graph.nodeList.length-1; i++) {
+            let node = this.graph.nodeList[i];
+            let layerType = node.graphName;
+            let layerName = this.layerNames[i];
+            let layerParams = node.parameterList;
+            let layerParamsStr = JSON.stringify(layerParams);
+            code += `        self.${layerName} = nn.${layerType}(${layerParamsStr})\n`;
         }
 
+        // Define forward pass
+        code += "\n    def forward(self, x):\n";
+        code += "        input0_output = x \n";
 
+        for (let i = 1; i < this.graph.nodeList.length; i++) {
+            let node = this.graph.nodeList[i];
+            code += this.generatePythonLine(i);
+        }
+
+        code += "        return output" + (this.graph.nodeList.length - 1) + "_output\n";
+        return code;
     }
 
 }
-
 
 var globalclicktime = 0;
 let arrowId = 0;
@@ -192,7 +424,10 @@ let componentHeight = 180;
 var tool = 0;
 let myGraph = new NetGraph('Main-Graph');
 let totalNodeList = [];
-let paraExample = { 'kernel_size': 3, "padding": 0, "stride": 1, "input dimension": "3,500,800", "output dimension": "3,500,800" }
+let paraExample =
+    { 'kernel_size': 3, "padding": 0, "stride": 1, "input dimension": "3,48,48", "output dimension": "10",
+        "in_features": "1024", "out_features": "512", "Activate Function": "Relu", "Pooling type": "Max", "dim": "1"
+    };
 const ActivateFunctionList = ['Sigmoid', 'Tanh', 'ReLU', 'Leaky ReLU', 'ELU', 'Softmax', 'Swish'];
 const PoolingTypeList = ['Max', "Min", "Average"];
 
@@ -253,12 +488,18 @@ draggables.forEach(function (image) {
 
     image.addEventListener('mouseover', function (event) {
         card.style.visibility = 'visible';
-        cardimg.src = "image/" + image.getAttribute('imgname') + '.png';
+        cardimg.src = image.getAttribute('src');
         let cardtitle = document.getElementById('cardtitle')
         cardtitle.textContent = image.getAttribute('imgname');
+        let cardtext = document.getElementById('cardtext')
+        cardtext.textContent = image.getAttribute('cardtext');
     });
 
     image.addEventListener('mouseout', function (event) {
+        card.style.visibility = 'hidden';
+    });
+
+    image.addEventListener('mousedown', function (event) {
         card.style.visibility = 'hidden';
     });
 });

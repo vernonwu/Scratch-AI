@@ -25,7 +25,7 @@ header .navbar-nav .active a.nav-link {
 }
 
 .Mycontainer {
-    
+
     margin-left: 5%;
     max-width: 90%;
 }
@@ -84,7 +84,7 @@ header .navbar-nav .active a.nav-link {
     height: 30px;
     margin-left: 10%;
     margin-top:10px;
-    
+
 }
 .searchicon{
     position: relative;
@@ -99,7 +99,7 @@ header .navbar-nav .active a.nav-link {
     border-collapse: collapse;
     border-radius: 20px;
     outline: none;
-    
+
 }
 
 .draggable {
@@ -257,4 +257,20 @@ header .navbar-nav .active a.nav-link {
 #cardimg{
     width: 100px;
     height: 150px;
+}
+
+#generate-code-btn {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#generate-code-btn:hover {
+    background-color: #0056b3;
 }

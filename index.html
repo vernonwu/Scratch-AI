@@ -58,16 +58,19 @@
                     <input class="searchbox" type="text" name="searchInfo">
                 </div>
 
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="conv2d" src="image/conv2d.png"
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="Conv2d" src="image/conv2d.png" cardtext = 'Applies a 2D convolution over an input signal composed of several input planes.'
                     draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="FC" src="image/FC.png"
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="Linear" src="image/FC.png" cardtext = 'Connects every neuron in one layer to every neuron in another layer.'
                     draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="pooling" src="image/pooling.png"
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="pooling" src="image/pooling.png" cardtext = 'Reduces the spatial dimensions (width and height) of the input volume.'
                     draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="input" src="image/input.png"
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="input" src="image/input.png" cardtext = 'The first layer of the neural network that receives the input data.';
                     draggable="true">
-                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="output" src="image/output.png"
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="output" src="image/output.png" cardtext = 'The last layer of the neural network that produces the final output.'
                     draggable="true">
+                <img class="draggable" ondragstart="dragstart_handler(event)" imgname="concatenate" src="image/concatenate.png" cardtext = 'Concatenates the input tensors along the specified axis.'
+                    draggable="true">
+
             </div>
             <div class="workspace">
                 <div id="canvas" ondrop="drop(event)" ondragover="allowDrop(event)">
@@ -86,16 +89,16 @@
                 </div>
             </div>
 
-            <textarea id="code-area">hello world</textarea>
+            <textarea id="code-area">hello world!</textarea>
+
         </div>
     </div>
     <div class="card " id='infocard'>
         <img src="..." id="cardimg" class="card-img-top" alt="...">
         <div class="card-body">
             <h5 class="card-title" id='cardtitle'>Card title</h5>
-            <p class="card-text">Some example text Some example text Some example text Some example text Some example
-                text</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <p class="card-text" id='cardtext'>Null</p>
+            <a href="#" class="btn btn-primary">More info</a>
         </div>
     </div>
 
