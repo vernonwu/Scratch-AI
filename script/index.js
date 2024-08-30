@@ -365,8 +365,8 @@ function drop(event) {
         element.style.position = "absolute";
         element.style.zIndex = 2;
         element.ondragstart = function (event) {
-            event.dataTransfer.setData('offX', offX);
-            event.dataTransfer.setData('offY', offY);
+            event.dataTransfer.setData('offX', event.target.getBoundingClientRect().left - event.clientX);
+            event.dataTransfer.setData('offY', event.target.getBoundingClientRect().top - event.clientY);
             if (event.target.parentNode.id != "canvas") {
                 event.dataTransfer.setData('id', event.target.parentNode.id)
             }
@@ -544,7 +544,6 @@ function drop(event) {
     }
     else {
         var element = document.getElementById(id);
-        console.log(element);
         element.style.left = (event.clientX - document.getElementById("canvas").getBoundingClientRect().left + Number(offX)) + 'px'; // 调整元件位置
         element.style.top = (event.clientY - document.getElementById("canvas").getBoundingClientRect().top + Number(offY)) + 'px';
         updateArrow(element);
@@ -561,6 +560,7 @@ function dragstart_handler(event) {
     isDarggingElement = true;
     var offX = event.target.getBoundingClientRect().left - event.clientX;
     var offY = event.target.getBoundingClientRect().top - event.clientY;
+    console.log({offX,offY})
     event.dataTransfer.setData('offX', offX);
     event.dataTransfer.setData('offY', offY);
     event.dataTransfer.setData('id', 0);
