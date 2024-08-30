@@ -766,10 +766,13 @@ function drop(event) {
         image.style.width = '96%';
         element.draggable = "true";
         element.classList.add("component");
-        element.id = ran;
         element.setAttribute('GraphName', GraphName);
         element.style.width = componentWidth + 'px';
         element.style.height = componentHeight + 'px';
+        if(GraphName == "concatenate"){
+            element.style.width = componentWidth + 'px';
+            element.style.height = componentHeight - 60 + 'px';
+        }
         element.style.position = "absolute";
         element.style.zIndex = 2;
         element.ondragstart = function (event) {
