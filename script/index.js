@@ -356,6 +356,7 @@ function drop(event) {
         element.setAttribute('GraphName', GraphName);
         element.style.width = componentWidth + 'px';
         element.style.height = componentHeight + 'px';
+        element.style.cursor="pointer";
         element.id = componentId;
         componentId++;
         if(GraphName == "concatenate"){

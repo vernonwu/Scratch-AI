@@ -109,6 +109,10 @@ header .navbar-nav .active a.nav-link {
     cursor: pointer;
 }
 
+#concatenate{
+    width: 100px;
+    height: 100px;
+}
 #componentbox {
     width: 13%;
     height: 100%;
