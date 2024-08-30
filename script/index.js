@@ -1,5 +1,6 @@
 var globalclicktime = 0;
 let arrowId = 0;
+let componentId = 10000;
 let componentWidth = 120;
 let componentHeight = 180;
 var tool = 0;
@@ -343,7 +344,6 @@ function drop(event) {
     var GraphName = event.dataTransfer.getData('GraphName');
     if (id == '0') {
         var element = document.createElement("div");
-        let ran = Math.floor(Math.random() * 1000) + 10000;
         var image = document.createElement('img');
         image.src = data;
         image.style.position = 'relative'
@@ -356,6 +356,8 @@ function drop(event) {
         element.setAttribute('GraphName', GraphName);
         element.style.width = componentWidth + 'px';
         element.style.height = componentHeight + 'px';
+        element.id = componentId;
+        componentId++;
         if(GraphName == "concatenate"){
             element.style.width = componentWidth + 'px';
             element.style.height = componentHeight - 60 + 'px';
@@ -542,6 +544,7 @@ function drop(event) {
     }
     else {
         var element = document.getElementById(id);
+        console.log(element);
         element.style.left = (event.clientX - document.getElementById("canvas").getBoundingClientRect().left + Number(offX)) + 'px'; // 调整元件位置
         element.style.top = (event.clientY - document.getElementById("canvas").getBoundingClientRect().top + Number(offY)) + 'px';
         updateArrow(element);

@@ -145,8 +145,14 @@ header .navbar-nav .active a.nav-link {
     z-index: 2;
 }
 
-#code-area {
+#code-div{
     width: 17%;
+    height: 100%;
+    overflow: auto;
+}
+
+#code-area {
+    width: 2000px;
     height: 100%;
     float: left;
     border: none;

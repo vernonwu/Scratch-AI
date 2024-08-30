@@ -40,8 +40,8 @@ class NetGraph {
                 console.warn(`Unsupported graph name: ${this.graphName}`);
         }
     }
-    calculateOutputDimensions(inputDim) {
 
+    calculateOutputDimensions(inputDim) {
         switch (this.graphName) {
             case 'input' || 'output':
                 return inputDim;
