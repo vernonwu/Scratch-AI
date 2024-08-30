@@ -489,6 +489,12 @@ draggables.forEach(function (image) {
     image.addEventListener('mouseover', function (event) {
         card.style.visibility = 'visible';
         cardimg.src = image.getAttribute('src');
+        if(image.getAttribute('src')=="image/concatenate.png"){
+            cardimg.style.height=componentHeight - 80+'px';
+        }
+        else{
+            cardimg.style.height=componentHeight-30+'px';
+        }
         let cardtitle = document.getElementById('cardtitle')
         cardtitle.textContent = image.getAttribute('imgname');
         let cardtext = document.getElementById('cardtext')
