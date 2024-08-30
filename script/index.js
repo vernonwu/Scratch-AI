@@ -494,6 +494,7 @@ draggables.forEach(function (image) {
         }
         else{
             cardimg.style.height=componentHeight-30+'px';
+            
         }
         let cardtitle = document.getElementById('cardtitle')
         cardtitle.textContent = image.getAttribute('imgname');
