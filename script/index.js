@@ -19,6 +19,42 @@ let startNode, endNode;
 // const offcanvasElementList = document.querySelectorAll('.offcanvas')
 // const offcanvasList = [...offcanvasElementList].map(offcanvasEl => new bootstrap.Offcanvas(offcanvasEl))
 
+let states = [];
+
+// Function to save the current state
+function saveState() {
+    // FIXME: using innerHTML only removes elements
+    states.push(canvas.innerHTML);
+}
+
+// Function to undo the last move
+function undo() {
+    if (states.length > 0) {
+        let lastState = states.pop();
+        canvas.innerHTML = lastState;
+    }
+}
+
+// Save the initial state
+saveState();
+
+// control+s to save the current graph
+document.addEventListener('keydown', function (event) {
+    if (event.ctrlKey && event.key === 'z') {
+        undo();
+    }
+    if (event.ctrlKey && event.key === 's') {
+        let code = myGraph.printGraph_bfs();
+        const blob = new Blob([code], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement
+        ('a');
+        a.href = url;
+        a.download = 'model.py';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+});
 
 function sign(x) {
     return (x > 0) - (x < 0) || +x;
@@ -119,6 +155,12 @@ function ParaToolOnclick(event) {
 
 function GenerateToolOnclick(event) {
     let code = myGraph.printGraph_bfs();
+    // // copy code to clipboard
+    // navigator.clipboard.writeText(code);
+    // setTimeout(() => {
+    //     alert('Code copied to clipboard');
+    // }, 1000);
+    // download code as a .py file
 }
 
 function allowDrop(event) {
